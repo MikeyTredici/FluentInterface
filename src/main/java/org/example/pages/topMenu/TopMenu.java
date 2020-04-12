@@ -2,33 +2,34 @@ package org.example.pages.topMenu;
 
 import org.example.utilities.PageBase;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.example.utilities.DriverFactory.getChromeDriver;
 
 public class TopMenu extends PageBase {
-    public WebDriver driver;
-    public WebDriverWait wait;
+    WebDriver driver = getChromeDriver();
+    private TopMenuActController act;
+    private TopMenuVerifyController verify;
 
-    public TopMenu(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-        wait = new WebDriverWait(driver, 5);
+    public TopMenuActController act() {
+        return act;
     }
 
-    @FindBy(xpath = "//li[@class='top-nav__primary__menu__item top-nav__primary__menu__item--players']")
-    private WebElement topNavPlayers;
-
-
-    public void clickTopNavPlayers() {
-        wait.until(ExpectedConditions.elementToBeClickable(topNavPlayers));
-        topNavPlayers.click();
-
-        logger.info("Clicked on Players in the Top Nav Bar");
+    public TopMenuVerifyController verify() {
+        return verify;
     }
 
+    private TopMenu(TopMenuActController act, TopMenuVerifyController verify) {
+        this.act = PageFactory.initElements(driver, TopMenuActController.class);
+        this.verify = PageFactory.initElements(driver, TopMenuVerifyController.class);
+    }
 
+    private TopMenu() {
+        // Hide me
+    }
 
+    public static TopMenu getTopMenu() {
+        return new TopMenu(new TopMenuActController(getChromeDriver()),
+                new TopMenuVerifyController());
+    }
 }

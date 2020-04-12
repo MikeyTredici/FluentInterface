@@ -1,32 +1,35 @@
 package org.example.pages.players;
 
-import com.aventstack.extentreports.Status;
-import org.apache.commons.lang3.StringUtils;
 import org.example.utilities.PageBase;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+
+import static org.example.utilities.DriverFactory.getChromeDriver;
 
 public class PlayersPage extends PageBase {
-    public WebDriver driver;
-    public WebDriverWait wait;
+    WebDriver driver = getChromeDriver();
+    private PlayersActController act;
+    private PlayersVerifyController verify;
 
-    public PlayersPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-        wait = new WebDriverWait(driver, 5);
+    public PlayersActController act() {
+        return act;
     }
 
-    @FindBy(xpath = "//h3[@class='player-jumbotron-vitals__name-num']")
-    private WebElement playerNameAndNumber;
+    public PlayersVerifyController verify() {
+        return verify;
+    }
 
-    public void validatePlayerName(String fullName) {
-        wait.until(ExpectedConditions.visibilityOf(playerNameAndNumber));
-        Assert.assertTrue(StringUtils.containsIgnoreCase(playerNameAndNumber.getText(), fullName), "Failed to find " + fullName);
-        logger.log(Status.PASS, "Successfully validated the Player Search by Name");
+    private PlayersPage(PlayersActController act, PlayersVerifyController verify) {
+        this.act = PageFactory.initElements(driver, PlayersActController.class);
+        this.verify = PageFactory.initElements(driver, PlayersVerifyController.class);
+    }
+
+    private PlayersPage() {
+        // Hide me
+    }
+
+    public static PlayersPage getPlayersPage() {
+        return new PlayersPage(new PlayersActController(),
+                new PlayersVerifyController(getChromeDriver()));
     }
 }
